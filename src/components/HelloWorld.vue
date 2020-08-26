@@ -44,6 +44,8 @@
       />
       <InputRange label="bodyHue" v-model:value="bodyHue" min="0" max="360" />
       <InputRange label="eyeHue" v-model:value="eyeHue" min="0" max="360" />
+      <button @click="setRandom">ランダム</button> /
+      <button @click="resetHue">デフォカラーに戻す</button>
     </section>
     <section class="canvas">
       <svg :width="radius * 3" :height="radius * 3">
@@ -98,16 +100,16 @@ export default defineComponent({
   },
   data() {
     return {
-      animFreq: 0.4,
+      animFreq: 0,
       animPhase: 0,
-      bodyFreq: 2.4,
+      bodyFreq: 0,
       bodyPhase: 0,
-      bodyAmp: 0.5,
-      bodyHue: 355,
-      eyeHue: 206,
+      bodyAmp: 0,
+      bodyHue: 0,
+      eyeHue: 0,
+      cellCount: 0,
       lastTime: 0,
       radius: 200,
-      cellCount: 11,
     }
   },
   computed: {
@@ -115,10 +117,8 @@ export default defineComponent({
       const count = Math.round(this.cellCount)
       return [...Array(count)]
         .reduce((acc: boolean[]) => {
-          return [
-            ...acc,
-            acc[acc.length - 1] || Math.random() < 0.5 ? false : true,
-          ]
+          // 目有りのセルを隣接させない
+          return [...acc, !(acc[acc.length - 1] || Math.random() < 0.3)]
         }, [])
         .map((hasEye, i) => {
           const phase =
@@ -192,10 +192,27 @@ export default defineComponent({
     },
   },
   mounted() {
+    this.setRandom()
+    this.resetHue()
+
     this.lastTime = new Date().getTime()
     requestAnimationFrame(this.step)
   },
   methods: {
+    setRandom() {
+      this.animFreq = 0.3 + Math.random()
+      this.animPhase = 0
+      this.bodyFreq = 1.5 + Math.random()
+      this.bodyPhase = Math.random()
+      this.bodyAmp = 0.5 - Math.random() * 0.3
+      this.bodyHue = Math.random() * 360
+      this.eyeHue = Math.random() * 360
+      this.cellCount = 11 + Math.random() * 5
+    },
+    resetHue() {
+      this.bodyHue = 355
+      this.eyeHue = 206
+    },
     step() {
       const time = new Date().getTime()
       const diff = time - this.lastTime

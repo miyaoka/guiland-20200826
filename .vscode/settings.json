@@ -1,0 +1,19 @@
+{
+  // save時にeslint（prettire含む）でフォーマットする
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "eslint.validate": ["javascript", "typescript", "vue"],
+  "prettier.disableLanguages": ["javascript", "typescript", "vue"],
+
+  // JS/TSの場合、VScodeのフォーマッタは無効にする
+  "[javascript]": {
+    "editor.formatOnSave": false
+  },
+  "[typescript]": {
+    "editor.formatOnSave": false
+  },
+
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "vetur.validation.template": true,
+}
